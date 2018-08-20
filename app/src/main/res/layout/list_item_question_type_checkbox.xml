@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/activity_margin_small"
+    android:layout_marginLeft="@dimen/activity_margin"
+    android:layout_marginRight="@dimen/activity_margin"
+    android:layout_marginTop="@dimen/activity_margin_small"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ques 1- Who is the first cricketer to score 200 in one day international?"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textColor="@color/app_text_color_dark"
+        android:textStyle="bold"
+        android:padding="10dp"
+        android:background="@drawable/rounded_corner"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/llOptions"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/activity_margin_small">
+    </LinearLayout>
+</LinearLayout>
