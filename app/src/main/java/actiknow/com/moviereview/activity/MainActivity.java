@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements BaseSliderView.On
         //initLogin();
     }
 
-    private void initLogin() {
+    private void initLogin(){
         if(userDetailPref.getStringPref(MainActivity.this, UserDetailPref.USER_EMAIL).equalsIgnoreCase("") && userDetailPref.getStringPref(MainActivity.this, UserDetailPref.USER_NAME).equalsIgnoreCase("")){
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);

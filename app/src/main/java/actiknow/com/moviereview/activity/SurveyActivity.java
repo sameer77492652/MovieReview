@@ -18,7 +18,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -41,8 +40,10 @@ import java.util.Map;
 
 import actiknow.com.moviereview.R;
 import actiknow.com.moviereview.adapter.QuestionAdapter;
+import actiknow.com.moviereview.adapter.ResponseAdapter;
 import actiknow.com.moviereview.model.Option;
 import actiknow.com.moviereview.model.Question;
+import actiknow.com.moviereview.model.Response;
 import actiknow.com.moviereview.utils.AppConfigTags;
 import actiknow.com.moviereview.utils.AppConfigURL;
 import actiknow.com.moviereview.utils.Constants;
@@ -51,16 +52,20 @@ import actiknow.com.moviereview.utils.Utils;
 
 public class SurveyActivity extends AppCompatActivity{
     RecyclerView rvSurveyList;
+    RecyclerView rvResponseList;
     ArrayList<Question> questionList = new ArrayList<>();
     TextView tvReview;
+    TextView tvShareOnFacebook;
     TextView tvThanku;
     TextView tvShare;
     TextView tvMovieTitle;
     ProgressDialog progressDialog;
     CoordinatorLayout clMain;
     QuestionAdapter adapter;
+    ResponseAdapter responseAdapter;
     ShareDialog shareDialog;
     String movie_title, movie_image;
+    ArrayList<Response> responseList = new ArrayList<Response>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -139,6 +144,7 @@ public class SurveyActivity extends AppCompatActivity{
         rvSurveyList.setFocusable (false);
         rvSurveyList.setLayoutManager (new LinearLayoutManager(SurveyActivity.this, LinearLayoutManager.VERTICAL, false));
 
+
     }
 
     private void initData() {
@@ -147,11 +153,13 @@ public class SurveyActivity extends AppCompatActivity{
 
     private void initView() {
         rvSurveyList = (RecyclerView)findViewById(R.id.rvSurveyList);
+        rvResponseList = (RecyclerView)findViewById(R.id.rvResponseList);
         clMain = (CoordinatorLayout)findViewById(R.id.clMain);
         tvReview = (TextView)findViewById(R.id.tvReview);
         tvThanku = (TextView)findViewById(R.id.tvThanku);
         tvMovieTitle = (TextView)findViewById(R.id.tvMovieTitle);
         tvShare = (TextView) findViewById(R.id.tvShare);
+        tvShareOnFacebook = (TextView) findViewById(R.id.tvShareOnFacebook);
     }
 
     private void getQuestionList(){
@@ -249,12 +257,19 @@ public class SurveyActivity extends AppCompatActivity{
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            String star = intent.getStringExtra("star");
-            Toast.makeText(SurveyActivity.this,star,Toast.LENGTH_SHORT).show();
-            tvThanku.setVisibility(View.VISIBLE);
-            tvShare.setVisibility(View.VISIBLE);
+            responseList = intent.getParcelableArrayListExtra("responseList");
+            tvThanku.setVisibility(View.GONE);
+            tvShare.setVisibility(View.GONE);
             tvReview.setVisibility(View.GONE);
             rvSurveyList.setVisibility(View.GONE);
+            tvShareOnFacebook.setVisibility(View.VISIBLE);
+            rvResponseList.setVisibility(View.VISIBLE);
+            responseAdapter = new ResponseAdapter(SurveyActivity.this, responseList);
+            rvResponseList.setAdapter (responseAdapter);
+            rvResponseList.setHasFixedSize (true);
+            rvResponseList.setNestedScrollingEnabled (false);
+            rvResponseList.setFocusable (false);
+            rvResponseList.setLayoutManager (new LinearLayoutManager(SurveyActivity.this, LinearLayoutManager.VERTICAL, false));
 
         }
     };

@@ -1,6 +1,8 @@
 package actiknow.com.moviereview.adapter;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
@@ -27,16 +29,14 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     OnItemClickListener mItemClickListener;
     private Activity activity;
     private ArrayList<Question> questionList;
-    private ArrayList<String> answerList = new ArrayList<> ();
     private ArrayList<String> checkBoxValue = new ArrayList<> ();
-    private ArrayList<Integer> position_list = new ArrayList<> ();
-
     private ArrayList<Response> response_list = new ArrayList<>();
 
     TextView tvReview;
     RecyclerView rvSurveyList;
-    int count = 0;
     String star;
+    TextView tvQuestion;
+    EditText etComment;
 
     public QuestionAdapter(Activity activity, ArrayList<Question> questionList, TextView tvReview, RecyclerView rvSurveyList){
         this.activity = activity;
@@ -47,30 +47,28 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     
     @Override
     public int getItemViewType (int position) {
-        Question question = questionList.get (position);
+        final Question question = questionList.get (position);
         tvReview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("Count", ""+response_list.size());
-                for(Response response : response_list){
-                    Log.e("Response", ""+response.getQuestion_id()+"-"+response.getAnswer());
-                }
-                /*if(questionList.size() - 1 != position_list.size()){
-                    for(int i = 0; i < questionList.size() - 1; i++){
-                        if(!position_list.contains(i)){
-                            rvSurveyList.scrollToPosition(i);
-                            Utils.showToast(activity, "Please give answer for this question", false);
-                            break;
-                        }
+            response_list.add(new Response(questionList.get(questionList.size() - 1).getQues_id(), etComment.getText().toString(), questionList.get(questionList.size() - 1).getQues_text()));
+            if(questionList.size() - 1 != response_list.size()){
+                /*for(int i = 0; i < questionList.size() - 1; i++){
+                    if(!String.valueOf(response_list.get(i).getQuestion_id()).contains(String.valueOf(i+1))){
+                        Utils.showLog(Log.ERROR, "QuestionId", ""+response_list.get(i).getQuestion_id() +"-"+ i+1, true);
+                        rvSurveyList.scrollToPosition(i);
+                        Utils.showToast(activity, "Please give answer for this question", false);
+                        break;
                     }
-                }else{
-                    Intent intent = new Intent("custom-message");
-                    intent.putExtra("star",star);
-                    LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
                 }*/
-                Log.e("Answer",""+ answerList);
+                Utils.showToast(activity, "Please give answer for all the question", false);
+            }else{
+                Intent intent = new Intent("custom-message");
+                intent.putParcelableArrayListExtra("responseList",response_list);
+                Utils.showLog(Log.ERROR, "responseList",""+response_list, true);
+                LocalBroadcastManager.getInstance(activity).sendBroadcast(intent);
+            }
 
-                Utils.showLog(Log.ERROR,"Clicked", ""+position_list, true);
             }
         });
 
@@ -132,24 +130,17 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         holder1.tvOptionC.setBackground(activity.getResources().getDrawable(R.drawable.rounded_corner));
                         holder1.tvOptionD.setBackground(activity.getResources().getDrawable(R.drawable.rounded_corner));
                         int i = 0;
-                        for(Response response : response_list){
-                            if(response.getQuestion_id() == question.getQues_id()) {
-                                response_list.remove(i);
-                            }else {
-                                response_list.add(new Response(question.getQues_id(), question.getOptions().get(0).getOption_text()));
+                        if(response_list.size() > 0) {
+                            for (Response response : response_list) {
+                                if (response.getQuestion_id() == question.getQues_id()) {
+                                    response_list.remove(i);
+                                }
+                                i++;
                             }
-                            i++;
                         }
 
-                        /*if(!position_list.contains(position+"-"+position)){
-                            position_list.add(position);
-                            answerList.add(position+"-"+String.valueOf(question.getOptions().get(0).getOption_text()));
-                        }else{
-                            position_list.remove(position);
-                            answerList.remove(position);
-                            position_list.add(position);
-                            answerList.add(position+"-"+String.valueOf(question.getOptions().get(0).getOption_text()));
-                        }*/
+                        response_list.add(new Response(question.getQues_id(), question.getOptions().get(0).getOption_text(), question.getQues_text()));
+
                     }
                 });
 
@@ -161,23 +152,16 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         holder1.tvOptionC.setBackground(activity.getResources().getDrawable(R.drawable.rounded_corner));
                         holder1.tvOptionD.setBackground(activity.getResources().getDrawable(R.drawable.rounded_corner));
                         int i = 0;
-                        for(Response response : response_list){
-                            if(response.getQuestion_id() == question.getQues_id()) {
-                                response_list.remove(i);
-                            }else {
-                                response_list.add(new Response(question.getQues_id(), question.getOptions().get(0).getOption_text()));
+                        if(response_list.size() > 0) {
+                            for (Response response : response_list) {
+                                if (response.getQuestion_id() == question.getQues_id()) {
+                                    response_list.remove(i);
+                                }
+                                i++;
                             }
-                            i++;
                         }
-                        /*if(!position_list.contains(position)) {
-                            position_list.add(position);
-                            answerList.add(position+"-"+String.valueOf(question.getOptions().get(1).getOption_text()));
-                        }else{
-                            position_list.remove(position);
-                            answerList.remove(position);
-                            position_list.add(position);
-                            answerList.add(position+"-"+String.valueOf(question.getOptions().get(0).getOption_text()));
-                        }*/
+                        response_list.add(new Response(question.getQues_id(), question.getOptions().get(1).getOption_text(), question.getQues_text()));
+
                     }
                 });
 
@@ -189,23 +173,16 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         holder1.tvOptionC.setBackground(activity.getResources().getDrawable(R.drawable.rounded_corner_green));
                         holder1.tvOptionD.setBackground(activity.getResources().getDrawable(R.drawable.rounded_corner));
                         int i = 0;
-                        for(Response response : response_list){
-                            if(response.getQuestion_id() == question.getQues_id()) {
-                                response_list.remove(i);
-                            }else {
-                                response_list.add(new Response(question.getQues_id(), question.getOptions().get(0).getOption_text()));
+                        if(response_list.size() > 0) {
+                            for (Response response : response_list) {
+                                if (response.getQuestion_id() == question.getQues_id()) {
+                                    response_list.remove(i);
+                                }
+                                i++;
                             }
-                            i++;
                         }
-                        /*if(!position_list.contains(position)) {
-                            position_list.add(position);
-                            answerList.add(position+"-"+String.valueOf(question.getOptions().get(2).getOption_text()));
-                        }else{
-                            position_list.remove(position);
-                            answerList.remove(position);
-                            position_list.add(position);
-                            answerList.add(position+"-"+String.valueOf(question.getOptions().get(0).getOption_text()));
-                        }*/
+                        response_list.add(new Response(question.getQues_id(), question.getOptions().get(2).getOption_text(), question.getQues_text()));
+
                     }
                 });
 
@@ -217,39 +194,23 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         holder1.tvOptionC.setBackground(activity.getResources().getDrawable(R.drawable.rounded_corner));
                         holder1.tvOptionD.setBackground(activity.getResources().getDrawable(R.drawable.rounded_corner_green));
                         int i = 0;
-                        for(Response response : response_list){
-                            if(response.getQuestion_id() == question.getQues_id()) {
-                                response_list.remove(i);
-                            }else {
-                                response_list.add(new Response(question.getQues_id(), question.getOptions().get(0).getOption_text()));
+                        if(response_list.size() > 0) {
+                            for (Response response : response_list) {
+                                if (response.getQuestion_id() == question.getQues_id()) {
+                                    response_list.remove(i);
+                                }
+                                i++;
                             }
-                            i++;
                         }
-                        /*if(!position_list.contains(position)) {
-                            position_list.add(position);
-                            answerList.add(position+"-"+String.valueOf(question.getOptions().get(3).getOption_text()));
-                        }else{
-                            position_list.remove(position);
-                            answerList.remove(position);
-                            position_list.add(position);
-                            answerList.add(position+"-"+String.valueOf(question.getOptions().get(3).getOption_text()));
-
-                            Utils.showLog(Log.ERROR, "QuestionList",""+ position_list, true);
-                            Utils.showLog(Log.ERROR, "AnswerList",""+ answerList, true);
-
-                          //  answerList.remove(answerList.indexOf(position));
-                        }*/
+                        response_list.add(new Response(question.getQues_id(), question.getOptions().get(3).getOption_text(), question.getQues_text()));
                     }
                 });
                 break;
 
             case 2:
                 ViewHolder2 holder2 = (ViewHolder2) holder;
-                Utils.setTypefaceToAllViews (activity, holder2.tvQuestion);
-                holder2.tvQuestion.setText (question.getQues_text ());
-                if(holder2.etComment.length() > 0){
-                    position_list.add(position);
-                }
+                Utils.setTypefaceToAllViews (activity, tvQuestion);
+                tvQuestion.setText (question.getQues_text ());
 
                 break;
             case 3:
@@ -266,22 +227,33 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     cbOption.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                         @Override
                         public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                            if(b){
-                                count++;
-                                if(!position_list.contains(position)) {
-                                    position_list.add(position);
+                        if(b){
+                            for(int i = 0; i < checkBoxValue.size(); i++){
+                                if(checkBoxValue.get(i).equalsIgnoreCase(option.getOption_text())){
+                                   checkBoxValue.remove(i);
                                 }
-
-                                checkBoxValue.add(cbOption.getId(), option.getOption_text());
-                            }else{
-                                count--;
-                                if(count == 0){
-                                     position_list.remove(position);
+                            }
+                            checkBoxValue.add(option.getOption_text());
+                        }else{
+                            for(int i = 0; i < checkBoxValue.size(); i++){
+                                if(checkBoxValue.get(i).equalsIgnoreCase(option.getOption_text())){
+                                    checkBoxValue.remove(i);
                                 }
-                                if(checkBoxValue.contains(option.getOption_text()))
-                                    checkBoxValue.remove(cbOption.getId());
                             }
                         }
+                        Utils.showLog(Log.ERROR, "CheckBoxValue", ""+checkBoxValue.toString(),true);
+                        int i = 0;
+                        if(response_list.size() > 0) {
+                            for (Response response : response_list) {
+                                if (response.getQuestion_id() == question.getQues_id()) {
+                                    response_list.remove(i);
+                                }
+                                i++;
+                            }
+                        }
+                        response_list.add(new Response(question.getQues_id(), checkBoxValue.toString(), question.getQues_text()));
+                        }
+
                     });
 
                     holder3.llOptions.addView(cbOption);
@@ -295,13 +267,16 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     @Override
                     public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
                         star = String.valueOf(ratingBar.getRating());
-                        if(!position_list.contains(position)){
-                            position_list.add(position);
-                            answerList.add(star);
-                        }else{
-                            position_list.remove(position_list.indexOf(position));
-                            answerList.remove(position_list.indexOf(position));
+                        int i = 0;
+                        if(response_list.size() > 0) {
+                            for (Response response : response_list) {
+                                if (response.getQuestion_id() == question.getQues_id()) {
+                                    response_list.remove(i);
+                                }
+                                i++;
+                            }
                         }
+                        response_list.add(new Response(question.getQues_id(), star, question.getQues_text()));
                         Utils.showToast(activity, "Option ID : " + ratingBar.getRating(), false);
                     }
                 });
@@ -352,8 +327,6 @@ public class QuestionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
     
     public class ViewHolder2 extends RecyclerView.ViewHolder{
-        TextView tvQuestion;
-        EditText etComment;
         
         public ViewHolder2 (View view) {
             super (view);

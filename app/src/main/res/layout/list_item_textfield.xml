@@ -30,6 +30,7 @@
         android:background="@drawable/rounded_corner"
         android:lines="3"
         android:layout_margin="10dp"
+        android:maxLength="100"
         />
 
 </LinearLayout>

@@ -1,12 +1,24 @@
 package actiknow.com.moviereview.model;
 
-public class Response {
-    int question_id;
-    String answer;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    public Response(int question_id, String answer) {
+public class Response implements Parcelable{
+    int question_id;
+    String answer, question;
+
+    public Response(int question_id, String answer, String question) {
         this.question_id = question_id;
         this.answer = answer;
+        this.question = question;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
     }
 
     public int getQuestion_id() {
@@ -23,5 +35,15 @@ public class Response {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+
     }
 }
